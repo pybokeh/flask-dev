@@ -1,0 +1,61 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: flask-dev
+  namespace: python-project
+  selfLink: /apis/build.openshift.io/v1/namespaces/python-project/buildconfigs/flask-dev
+  uid: 416aaea5-4a17-11ea-acec-0a580a800019
+  resourceVersion: '11669075'
+  creationTimestamp: '2020-02-08T02:03:53Z'
+  labels:
+    app: flask-dev
+    app.kubernetes.io/component: flask-dev
+    app.kubernetes.io/instance: flask-dev
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: flask-dev-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: '3.6'
+  annotations:
+    app.openshift.io/vcs-ref: master
+    app.openshift.io/vcs-uri: 'https://github.com/pybokeh/flask-dev'
+spec:
+  nodeSelector: null
+  output:
+    to:
+      kind: ImageStreamTag
+      name: 'flask-dev:latest'
+  resources: {}
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
+  strategy:
+    type: Source
+    sourceStrategy:
+      from:
+        kind: ImageStreamTag
+        namespace: openshift
+        name: 'python:3.6'
+  postCommit: {}
+  source:
+    type: Git
+    git:
+      uri: 'https://github.com/pybokeh/flask-dev'
+    contextDir: /
+    sourceSecret:
+      name: gh-secret
+  triggers:
+    - type: Generic
+      generic:
+        secretReference:
+          name: flask-dev-generic-webhook-secret
+    - type: GitHub
+      github:
+        secretReference:
+          name: flask-dev-github-webhook-secret
+    - type: ImageChange
+      imageChange:
+        lastTriggeredImageID: >-
+          image-registry.openshift-image-registry.svc:5000/openshift/python@sha256:dda463e258d2e4ea2754bf5ab41249a38b50b6e4c32fcb6d7e82b144cfa10b4f
+    - type: ConfigChange
+  runPolicy: Serial
+status:
+  lastVersion: 4

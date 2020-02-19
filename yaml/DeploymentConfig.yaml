@@ -1,0 +1,106 @@
+kind: DeploymentConfig
+apiVersion: apps.openshift.io/v1
+metadata:
+  annotations:
+    app.openshift.io/vcs-ref: master
+    app.openshift.io/vcs-uri: 'https://github.com/pybokeh/flask-dev'
+  selfLink: >-
+    /apis/apps.openshift.io/v1/namespaces/python-project/deploymentconfigs/flask-dev
+  resourceVersion: '22153314'
+  name: flask-dev
+  uid: 416d3df3-4a17-11ea-994b-0a580a810029
+  creationTimestamp: '2020-02-08T02:03:53Z'
+  generation: 8
+  namespace: python-project
+  labels:
+    app: flask-dev
+    app.kubernetes.io/component: flask-dev
+    app.kubernetes.io/instance: flask-dev
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: flask-dev-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: '3.6'
+spec:
+  strategy:
+    type: Rolling
+    rollingParams:
+      updatePeriodSeconds: 1
+      intervalSeconds: 1
+      timeoutSeconds: 600
+      maxUnavailable: 25%
+      maxSurge: 25%
+    resources: {}
+    activeDeadlineSeconds: 21600
+  triggers:
+    - type: ImageChange
+      imageChangeParams:
+        automatic: true
+        containerNames:
+          - flask-dev
+        from:
+          kind: ImageStreamTag
+          namespace: python-project
+          name: 'flask-dev:latest'
+        lastTriggeredImage: >-
+          image-registry.openshift-image-registry.svc:5000/python-project/flask-dev@sha256:add23c7aa95f2bbec2f295baa88779cf60958cca61592b1dcfcd4f9bcc28014c
+    - type: ConfigChange
+  replicas: 1
+  revisionHistoryLimit: 10
+  test: false
+  selector:
+    app: flask-dev
+    deploymentconfig: flask-dev
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: flask-dev
+        deploymentconfig: flask-dev
+    spec:
+      containers:
+        - resources: {}
+          terminationMessagePath: /dev/termination-log
+          name: flask-dev
+          command:
+            - flask
+            - run
+            - '--host=0.0.0.0'
+          env:
+            - name: FLASK_APP
+              value: hello.py
+          ports:
+            - containerPort: 5000
+              protocol: TCP
+          imagePullPolicy: Always
+          terminationMessagePolicy: File
+          image: >-
+            image-registry.openshift-image-registry.svc:5000/python-project/flask-dev@sha256:add23c7aa95f2bbec2f295baa88779cf60958cca61592b1dcfcd4f9bcc28014c
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+      dnsPolicy: ClusterFirst
+      securityContext: {}
+      schedulerName: default-scheduler
+status:
+  observedGeneration: 8
+  details:
+    message: config change
+    causes:
+      - type: ConfigChange
+  availableReplicas: 1
+  unavailableReplicas: 0
+  latestVersion: 7
+  updatedReplicas: 1
+  conditions:
+    - type: Available
+      status: 'True'
+      lastUpdateTime: '2020-02-08T02:08:20Z'
+      lastTransitionTime: '2020-02-08T02:08:20Z'
+      message: Deployment config has minimum availability.
+    - type: Progressing
+      status: 'True'
+      lastUpdateTime: '2020-02-19T18:53:20Z'
+      lastTransitionTime: '2020-02-19T18:53:17Z'
+      reason: NewReplicationControllerAvailable
+      message: replication controller "flask-dev-7" successfully rolled out
+  replicas: 1
+  readyReplicas: 1

@@ -1,0 +1,42 @@
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: flask-dev-route
+  namespace: python-project
+  selfLink: /apis/route.openshift.io/v1/namespaces/python-project/routes/flask-dev-route
+  uid: 45033e6b-4a1e-11ea-acec-0a580a800019
+  resourceVersion: '11674623'
+  creationTimestamp: '2020-02-08T02:54:05Z'
+  labels:
+    app: flask-dev
+    app.kubernetes.io/component: flask-dev
+    app.kubernetes.io/instance: flask-dev
+    app.kubernetes.io/name: python
+    app.kubernetes.io/part-of: flask-dev-app
+    app.openshift.io/runtime: python
+    app.openshift.io/runtime-version: '3.6'
+  annotations:
+    openshift.io/host.generated: 'true'
+spec:
+  host: flask-dev-route-python-project.apps.honda-lde.rht-labs.com
+  subdomain: ''
+  to:
+    kind: Service
+    name: flask-dev
+    weight: 100
+  port:
+    targetPort: 5000
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  wildcardPolicy: None
+status:
+  ingress:
+    - host: flask-dev-route-python-project.apps.honda-lde.rht-labs.com
+      routerName: default
+      conditions:
+        - type: Admitted
+          status: 'True'
+          lastTransitionTime: '2020-02-08T02:54:05Z'
+      wildcardPolicy: None
+      routerCanonicalHostname: apps.honda-lde.rht-labs.com
